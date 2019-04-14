@@ -27,6 +27,7 @@ public class RazorpayActivity extends Activity implements PaymentResultListener 
     public static String EXTRA_PREFILL_CONTACT = "contact";
     public static String PAYMENT_ID = "payment_id";
     public static String RAZORPAY_KEY = "api_key";
+    public static String EXTRA_PREFILL_METHOD = "method";
 
 
     @Override
@@ -60,6 +61,7 @@ public class RazorpayActivity extends Activity implements PaymentResultListener 
             options.put("theme",color);
             JSONObject preFill = new JSONObject();
             preFill.put(EXTRA_PREFILL_EMAIL, intent.getStringExtra(EXTRA_PREFILL_EMAIL));
+            preFill.put(EXTRA_PREFILL_METHOD, intent.getStringExtra(EXTRA_PREFILL_METHOD));
             preFill.put(EXTRA_PREFILL_CONTACT, intent.getStringExtra(EXTRA_PREFILL_CONTACT));
             options.put("prefill", preFill);
 
