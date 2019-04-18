@@ -49,7 +49,7 @@ public class RazorpayPlugin implements MethodCallHandler, PluginRegistry.Activit
             razorpayIntent.putExtra(RazorpayActivity.EXTRA_PREFILL_EMAIL, (String) arguments.get("email"));
             razorpayIntent.putExtra(RazorpayActivity.EXTRA_THEME, (String) arguments.get("theme"));
             razorpayIntent.putExtra(RazorpayActivity.EXTRA_NOTES, (Serializable) arguments.get("notes"));
-
+            razorpayIntent.putExtra(RazorpayActivity.ORDER_ID, (String) arguments.get("order_id"));
             razorpayIntent.putExtra(RazorpayActivity.EXTRA_PREFILL_CONTACT, (String) arguments.get("contact"));
             razorpayIntent.putExtra(RazorpayActivity.EXTRA_PREFILL_METHOD, (String) arguments.get("method"));
             razorpayIntent.putExtra(RazorpayActivity.RAZORPAY_KEY, (String) arguments.get("api_key"));
@@ -65,7 +65,9 @@ public class RazorpayPlugin implements MethodCallHandler, PluginRegistry.Activit
             if (resultCode == Activity.RESULT_OK) {
                 HashMap<String, String> data = new HashMap<>();
                 String response = intent.getStringExtra("payment_id");
+                String signature = intent.getStringExtra("signature");
                 data.put("code", "1");
+                data.put("signature", signature);
                 data.put("message", response);
                 pendingResult.success(data);
             } else {

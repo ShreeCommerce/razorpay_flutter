@@ -6,7 +6,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.razorpay.Checkout;
-import com.razorpay.PaymentResultListener;
+import com.razorpay.PaymentData;
+import com.razorpay.PaymentResultWithDataListener;
 
 import org.json.JSONObject;
 
@@ -15,7 +16,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RazorpayActivity extends Activity implements PaymentResultListener {
+public class RazorpayActivity extends Activity implements PaymentResultWithDataListener {
     private static final String TAG = RazorpayActivity.class.getSimpleName();
     public static String EXTRA_PRODUCT_NAME = "name";
     public static String EXTRA_PRODUCT_IMAGE = "image";
@@ -28,6 +29,7 @@ public class RazorpayActivity extends Activity implements PaymentResultListener 
     public static String PAYMENT_ID = "payment_id";
     public static String RAZORPAY_KEY = "api_key";
     public static String EXTRA_PREFILL_METHOD = "method";
+    public static String ORDER_ID = "order_id";
 
 
     @Override
@@ -56,6 +58,7 @@ public class RazorpayActivity extends Activity implements PaymentResultListener 
             options.put(EXTRA_PRODUCT_IMAGE, intent.getStringExtra(EXTRA_PRODUCT_IMAGE));
             options.put("currency", "INR");
             options.put(EXTRA_PRODUCT_AMOUNT, intent.getStringExtra(EXTRA_PRODUCT_AMOUNT));
+            options.put(ORDER_ID, intent.getStringExtra(ORDER_ID));
             JSONObject color = new JSONObject();
             color.put("color", intent.getStringExtra(EXTRA_THEME));
             options.put("theme",color);
@@ -87,30 +90,11 @@ public class RazorpayActivity extends Activity implements PaymentResultListener 
 
     /**
      * The name of the function has to be
-     * onPaymentSuccess
-     * Wrap your code in try catch, as shown, to ensure that this method runs correctly
-     */
-    @SuppressWarnings("unused")
-    @Override
-    public void onPaymentSuccess(String razorpayPaymentID) {
-        try {
-            Intent data = new Intent();
-            data.putExtra(PAYMENT_ID, razorpayPaymentID);
-            setResult(Activity.RESULT_OK, data);
-            finish();
-        } catch (Exception e) {
-            Log.e(TAG, "Exception in onPaymentSuccess", e);
-        }
-    }
-
-    /**
-     * The name of the function has to be
      * onPaymentError
      * Wrap your code in try catch, as shown, to ensure that this method runs correctly
      */
-    @SuppressWarnings("unused")
     @Override
-    public void onPaymentError(int code, String response) {
+    public void onPaymentError(int code, String response, PaymentData paymentData) {
         try {
             Intent data = new Intent();
             data.putExtra(PAYMENT_ID, response);
@@ -118,6 +102,24 @@ public class RazorpayActivity extends Activity implements PaymentResultListener 
             finish();
         } catch (Exception e) {
             Log.e(TAG, "Exception in onPaymentError", e);
+        }
+    }
+
+    /**
+     * The name of the function has to be
+     * onPaymentSuccess
+     * Wrap your code in try catch, as shown, to ensure that this method runs correctly
+     */
+    @Override
+    public void onPaymentSuccess(String razorpayPaymentID, PaymentData datas) {
+        try {
+            Intent data = new Intent();
+            data.putExtra(PAYMENT_ID, razorpayPaymentID);
+            data.putExtra("signature", datas.getSignature());
+            setResult(Activity.RESULT_OK, data);
+            finish();
+        } catch (Exception e) {
+            Log.e(TAG, "Exception in onPaymentSuccess", e);
         }
     }
 }
